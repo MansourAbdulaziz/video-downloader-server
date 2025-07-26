@@ -55,7 +55,7 @@ def cleanup():
     return jsonify(result), 200
 
 # ✅ تشغيل السيرفر فقط إذا كان الملف هو الرئيسي
-if _name_ == '_main_':
+if __name__ == '_main_':
     cleanup_old_files()
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
