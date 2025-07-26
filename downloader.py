@@ -43,6 +43,19 @@ def process_url(url):
             return {"error": "yt-dlp failed", "details": result.stderr.strip()}
 
         info = json.loads(result.stdout)
+
+        print("DEBUG yt-dlp info:", info)
+
+        best_url = None
+        if "formats" in info:
+
+            for f in reversed(info["formats"]):
+                if "url" in f and f["url"]:
+                    best_url = f["url"]
+                    break
+        else:
+            best_url = info.get("url")
+
         return {
             "title": info.get("title"),
             "download_url": info.get("url"),
