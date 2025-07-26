@@ -36,6 +36,11 @@ def download_file():
             return jsonify({'error': 'Missing url'}), 400
 
         result = download_video(url)
+
+        if "file" in result and "download_url" not in result:
+            filename = result["file"]
+            result["download_url"] = f"{request.host_url}file/{filename}"
+       
         return jsonify(result), 200
 
     except Exception as e:

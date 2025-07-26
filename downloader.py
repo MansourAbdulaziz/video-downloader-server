@@ -79,10 +79,13 @@ def download_video(url):
         if result.returncode != 0:
             return {"error": "Download failed", "details": result.stderr.strip()}
 
+        download_link = f"https://video-downloader-server-msm2.onrender.com/file/{filename}"  # غيّر localhost وport حسب سيرفرك
+
         return {
             "message": "Download successful",
             "file": filename,
             "path": output_path
+            "download_url": download_link   # ← مهم جداً
         }
 
     except subprocess.TimeoutExpired:
