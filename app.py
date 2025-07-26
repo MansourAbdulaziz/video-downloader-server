@@ -3,6 +3,7 @@ from downloader import process_url, download_video, cleanup_old_files
 import os
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 # ✅ فحص حالة السيرفر
 @app.route('/')
