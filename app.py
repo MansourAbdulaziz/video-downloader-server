@@ -15,12 +15,11 @@ def download():
     try:
         data = request.get_json(force=True)
         url = data.get('url')
-        platform = data.get('platform')
 
-        if not url or not platform:
-            return jsonify({'error': 'Missing url or platform'}), 400
+        if not url:
+            return jsonify({'error': 'Missing url'}), 400
 
-        result = process_url(url, platform)
+        result = process_url(url)
         return jsonify(result), 200
 
     except Exception as e:
@@ -32,12 +31,11 @@ def download_file():
     try:
         data = request.get_json(force=True)
         url = data.get('url')
-        platform = data.get('platform')
 
-        if not url or not platform:
-            return jsonify({'error': 'Missing url or platform'}), 400
+        if not url:
+            return jsonify({'error': 'Missing url'}), 400
 
-        result = download_video(url, platform)
+        result = download_video(url)
         return jsonify(result), 200
 
     except Exception as e:

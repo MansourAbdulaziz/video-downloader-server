@@ -10,14 +10,23 @@ MAX_FILE_AGE_SECONDS = 3600  # ⏱ 1 ساعة
 
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-# ✅ تحديد مسار ملف الكوكيز حسب المنصة
-def get_cookie_path(platform):
-    path = f"cookies/{platform}.txt"
-    return path if os.path.exists(path) else None
+# ✅ تحديد ملف الكوكيز المناسب حسب رابط الفيديو
+def get_cookie_path_by_url(url):
+    url = url.lower()
+    if "youtube.com" in url or "youtu.be" in url:
+        return "cookies/youtube.txt"
+    elif "tiktok.com" in url:
+        return "cookies/tiktok.txt"
+    elif "instagram.com" in url:
+        return "cookies/instagram.txt"
+    elif "twitter.com" in url or "x.com" in url:
+        return "cookies/twitter.txt"
+    else:
+        return None  # تحميل بدون كوكيز
 
 # ✅ استخراج معلومات الفيديو بدون تحميل
-def process_url(url, platform):
-    cookie_path = get_cookie_path(platform)
+def process_url(url):
+    cookie_path = get_cookie_path_by_url(url)
     command = [
         "yt-dlp",
         "--no-warnings",
@@ -25,7 +34,7 @@ def process_url(url, platform):
         "--print-json",
         url
     ]
-    if cookie_path:
+    if cookie_path and os.path.exists(cookie_path):
         command.extend(["--cookies", cookie_path])
 
     try:
@@ -40,7 +49,7 @@ def process_url(url, platform):
             "thumbnail": info.get("thumbnail"),
             "duration": info.get("duration"),
             "uploader": info.get("uploader"),
-            "platform": platform
+            "platform": info.get("extractor_key"),
         }
 
     except subprocess.TimeoutExpired:
@@ -51,8 +60,8 @@ def process_url(url, platform):
         return {"error": str(e)}
 
 # ✅ تحميل الفيديو فعليًا
-def download_video(url, platform):
-    cookie_path = get_cookie_path(platform)
+def download_video(url):
+    cookie_path = get_cookie_path_by_url(url)
     filename = f"{uuid.uuid4()}.mp4"
     output_path = os.path.join(DOWNLOAD_DIR, filename)
 
@@ -62,7 +71,7 @@ def download_video(url, platform):
         "-o", output_path,
         url
     ]
-    if cookie_path:
+    if cookie_path and os.path.exists(cookie_path):
         command.extend(["--cookies", cookie_path])
 
     try:
