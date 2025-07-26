@@ -40,15 +40,14 @@ def process_url(url):
     try:
         result = subprocess.run(command, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
+            print("yt-dlp failed:", result.stderr.strip())
             return {"error": "yt-dlp failed", "details": result.stderr.strip()}
 
         info = json.loads(result.stdout)
-
         print("DEBUG yt-dlp info:", info)
 
         best_url = None
         if "formats" in info:
-
             for f in reversed(info["formats"]):
                 if "url" in f and f["url"]:
                     best_url = f["url"]
@@ -56,9 +55,11 @@ def process_url(url):
         else:
             best_url = info.get("url")
 
+        print("Selected download_url:", best_url)
+
         return {
             "title": info.get("title"),
-            "download_url": info.get("url"),
+            "download_url": best_url,
             "thumbnail": info.get("thumbnail"),
             "duration": info.get("duration"),
             "uploader": info.get("uploader"),
@@ -70,6 +71,7 @@ def process_url(url):
     except json.JSONDecodeError:
         return {"error": "Failed to parse yt-dlp output"}
     except Exception as e:
+        print("Exception in process_url:", str(e))
         return {"error": str(e)}
 
 # ✅ تحميل الفيديو فعليًا
