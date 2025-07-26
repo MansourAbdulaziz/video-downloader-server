@@ -48,23 +48,30 @@ def process_url(url):
 
         best_url = None
         if "formats" in info:
-            for f in reversed(info["formats"]):
+            formats = sorted(info["formats"], key=lambda f: f.get("height", 0), reverse=True)
+            for f in formats:
                 url_candidate = f.get("url")
                 ext = f.get("ext", "")
                 if url_candidate:
                     if ext == "mp4":
                         best_url = url_candidate
+                        print(f"Selected mp4 url with height {f.get('height')}")
                         break
                     elif ext == "m3u8" or (url_candidate.endswith(".m3u8")):
                         best_url = url_candidate
+                        print("Selected m3u8 url")
                         break
 
             if not best_url and len(info["formats"]) > 0:
-                best_url = info["formats"][-1].get("url")
+                best_url = formats[0].get("url")
+                print("Fallback to first available format url")
         else:
             best_url = info.get("url")
 
         print("Selected download_url:", best_url)
+
+        if not best_url:
+            return {"error": "No valid download URL found."}
 
         return {
             "title": info.get("title"),
