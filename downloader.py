@@ -49,9 +49,18 @@ def process_url(url):
         best_url = None
         if "formats" in info:
             for f in reversed(info["formats"]):
-                if "url" in f and f["url"]:
-                    best_url = f["url"]
-                    break
+                url_candidate = f.get("url")
+                ext = f.get("ext", "")
+                if url_candidate:
+                    if ext == "mp4":
+                        best_url = url_candidate
+                        break
+                    elif ext == "m3u8" or (url_candidate.endswith(".m3u8")):
+                        best_url = url_candidate
+                        break
+
+            if not best_url and len(info["formats"]) > 0:
+                best_url = info["formats"][-1].get("url")
         else:
             best_url = info.get("url")
 
