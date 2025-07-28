@@ -155,6 +155,19 @@ def download_video(url):
     except Exception as e:
         return {"error": str(e)}
 
+# ✅ تنظيف الملفات القديمة من مجلد downloads
+def cleanup_old_files():
+    now = time.time()
+    deleted = 0
+    for filename in os.listdir(DOWNLOAD_DIR):
+        filepath = os.path.join(DOWNLOAD_DIR, filename)
+        if os.path.isfile(filepath):
+            created = os.path.getctime(filepath)
+            if now - created > MAX_FILE_AGE_SECONDS:
+                os.remove(filepath)
+                deleted += 1
+    return deleted
+
 # ✅ نقاط دخول API
 @app.route("/")
 def index():
