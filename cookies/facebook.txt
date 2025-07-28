@@ -1,1 +1,5 @@
-datr=7dKGaKG8_jrzj7IbzZoExWUU; fr=0meB98FW9C5dV8qul..BohtLt..AAA.0.0.BohtLt.AWdims57kvjzuqWkmVg8mXbrcx0; sb=7dKGaNs5CNhyIazwPuHtinmU; wd=1280x720
+# Netscape HTTP Cookie File
+.facebook.com	TRUE	/	TRUE	1788227387.36075	datr	O9eGaDipt0kLYodgVp1O8pn7
+.facebook.com	TRUE	/	TRUE	1761443387.361289	fr	0vsLptLJcZRbMRgYm..Bohtc7..AAA.0.0.Bohtc7.AWdMAp27e3kAP73m2aFM0hGalIw
+.facebook.com	TRUE	/	TRUE	1788227387.361375	sb	O9eGaBY_AVDtsqAaRAdta34H
+.facebook.com	TRUE	/	TRUE	1754272188	wd	1280x720

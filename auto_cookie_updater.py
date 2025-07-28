@@ -40,17 +40,30 @@ def save_cookies_for_site(playwright, domain, filename):
     page.wait_for_timeout(7000)
 
     cookies = context.cookies()
-    cookie_str = "; ".join(
-        f"{cookie['name']}={cookie['value']}"
-        for cookie in cookies if domain in cookie['domain']
-    )
-
     cookie_path = COOKIES_DIR / filename
-    cookie_path.write_text(cookie_str, encoding="utf-8")
+
+    # رأس ملف الكوكيز بصيغة Netscape
+    header = "# Netscape HTTP Cookie File\n"
+    lines = [header]
+
+    for cookie in cookies:
+        domain_cookie = cookie["domain"]
+        include_subdomains = "TRUE" if domain_cookie.startswith(".") else "FALSE"
+        path = cookie.get("path", "/")
+        secure = "TRUE" if cookie.get("secure", False) else "FALSE"
+        expiry = str(cookie.get("expires", 0))
+        name = cookie["name"]
+        value = cookie["value"]
+
+        line = f"{domain_cookie}\t{include_subdomains}\t{path}\t{secure}\t{expiry}\t{name}\t{value}\n"
+        lines.append(line)
+
+    cookie_path.write_text("".join(lines), encoding="utf-8")
     print(f"✅ تم حفظ الكوكيز في: {cookie_path}")
 
     context.close()
     browser.close()
+
 
 def main():
     with sync_playwright() as playwright:
