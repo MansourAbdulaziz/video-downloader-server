@@ -106,6 +106,17 @@ def process_url(url):
         if not best_url:
             return {"error": "No valid download URL found."}
 
+        # ✅ تحديد نوع الوسيط
+        media_type = "unknown"
+        if best_url:
+            lowered = best_url.lower()
+            if any(ext in lowered for ext in [".mp4", ".mkv", ".mov", ".webm"]):
+                media_type = "video"
+            elif any(ext in lowered for ext in [".mp3", ".wav", ".m4a", ".aac"]):
+                media_type = "audio"
+            elif any(ext in lowered for ext in [".jpg", ".jpeg", ".png", ".webp", ".gif"]):
+                media_type = "image"
+
         return {
             "title": info.get("title"),
             "download_url": best_url,
@@ -113,6 +124,7 @@ def process_url(url):
             "duration": info.get("duration"),
             "uploader": info.get("uploader"),
             "platform": info.get("extractor_key"),
+            "media_type": media_type
         }
 
     except subprocess.TimeoutExpired:
