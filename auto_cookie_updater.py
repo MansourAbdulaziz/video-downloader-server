@@ -1,6 +1,5 @@
 # auto_cookie_updater.py
 import os
-import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -15,6 +14,19 @@ TARGETS = {
 COOKIES_DIR = Path("cookies")
 COOKIES_DIR.mkdir(exist_ok=True)
 
+def save_cookies_as_netscape(cookies, file_path):
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write("# Netscape HTTP Cookie File\n")
+        for cookie in cookies:
+            domain = cookie.get("domain", "")
+            include_subdomains = "TRUE" if domain.startswith(".") else "FALSE"
+            path = cookie.get("path", "/")
+            secure = "TRUE" if cookie.get("secure", False) else "FALSE"
+            expires = int(cookie.get("expires", 0))
+            name = cookie.get("name", "")
+            value = cookie.get("value", "")
+            f.write(f"{domain}\t{include_subdomains}\t{path}\t{secure}\t{expires}\t{name}\t{value}\n")
+
 def save_cookies_for_site(playwright, domain, filename):
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
@@ -26,10 +38,9 @@ def save_cookies_for_site(playwright, domain, filename):
     page.wait_for_timeout(7000)
 
     cookies = context.cookies()
-    cookie_str = "; ".join(f"{cookie['name']}={cookie['value']}" for cookie in cookies if domain in cookie['domain'])
-    cookie_path = COOKIES_DIR / filename
-    cookie_path.write_text(cookie_str, encoding="utf-8")
-    print(f"✅ تم حفظ الكوكيز في: {cookie_path}")
+    file_path = COOKIES_DIR / filename
+    save_cookies_as_netscape(cookies, file_path)
+    print(f"✅ تم حفظ الكوكيز في: {file_path}")
 
     context.close()
     browser.close()

@@ -1,1 +1,8 @@
-tt_csrf_token=pqjiC10E-ADdpw076v1g7aQMnFLZsrkaV50o; tt_chain_token=Yu6OFl47pGH5ISMS+vDKzw==; tiktok_webapp_theme_source=auto; tiktok_webapp_theme=dark; ttwid=1%7CKFBcd4AsLyecjHES4YbN0sdJ94crlo_MMIdGp3AW7Xk%7C1753663448%7C8d380db796e63c13b56eb55b2ec43e951edca691555ddc5c5c49901d1c992ad8; msToken=-zAuac7SXkbxepyoL6ZN9x96zKa9K9sLfOAYlxkqtTh0zHGJG96PzcFtrBOXTftgjkLZaYUXGPQrNopZpKJc78axhXh9E5dI7wmwfDV7EHnyq6pM7qMRTMNnRzRyxlf8a8jU2w==; msToken=-zAuac7SXkbxepyoL6ZN9x96zKa9K9sLfOAYlxkqtTh0zHGJG96PzcFtrBOXTftgjkLZaYUXGPQrNopZpKJc78axhXh9E5dI7wmwfDV7EHnyq6pM7qMRTMNnRzRyxlf8a8jU2w==
+# Netscape HTTP Cookie File
+.tiktok.com	TRUE	/	TRUE	-1	tt_csrf_token	zqEBC0Ai-57aUbFcopW_8Y-QbvEvzgGbq57E
+.tiktok.com	TRUE	/	TRUE	1769215934	tt_chain_token	NHM1E9lp0R3oLGcLjsw9xw==
+.www.tiktok.com	TRUE	/	TRUE	1779583936	tiktok_webapp_theme_source	auto
+.www.tiktok.com	TRUE	/	TRUE	1779583936	tiktok_webapp_theme	dark
+.tiktok.com	TRUE	/	TRUE	1785199936	ttwid	1%7CvD03_fh5CuHGPrO4xu_YWcLol46QIISqgcgE7LL44zQ%7C1753663937%7C0bc42586b2c4db59505963ddea2af94b28c51d276d6f245716fd760a00bbb3ed
+.tiktok.com	TRUE	/	TRUE	1754527945	msToken	1Hh--qrthKMfF8MKv0Xrm19cJeHz-h4r_KbllKOLFe9_TStK5NcvpOxN7wQDFD7TDMSs8TY4Fa9zP_TOJwSjXTAyLUu67Dcp72BuAKKZqPEDhvJ4rKBCrpNDhF6QdpIrjDXz7-1twa2UilRHgeN54TA=
+www.tiktok.com	FALSE	/	FALSE	1761439945	msToken	1Hh--qrthKMfF8MKv0Xrm19cJeHz-h4r_KbllKOLFe9_TStK5NcvpOxN7wQDFD7TDMSs8TY4Fa9zP_TOJwSjXTAyLUu67Dcp72BuAKKZqPEDhvJ4rKBCrpNDhF6QdpIrjDXz7-1twa2UilRHgeN54TA=

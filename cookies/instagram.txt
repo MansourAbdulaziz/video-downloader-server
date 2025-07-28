@@ -1,1 +1,6 @@
-ig_did=3563AC81-4315-4C14-ABC8-AB0BA8F4A4AC; csrftoken=IQN2N6ZZ8NRix_Bzgv3bL0; datr=4seGaNqzqowx6irM44xW0zHk; ps_l=1; ps_n=1; wd=1280x720; mid=aIbH4gALAAFa1ASzMh7Lke4uVYxz
+# Netscape HTTP Cookie File
+.instagram.com	TRUE	/	TRUE	1785199950	ig_did	FB26748B-9795-4744-ABF8-F19EB22EAD2A
+.instagram.com	TRUE	/	TRUE	1788223950	csrftoken	ks-lsAQ9rPBPlereGwSGiQ
+.instagram.com	TRUE	/	TRUE	1788223950	datr	zsmGaLxqL4f8Zjx0_wcDoR6E
+.instagram.com	TRUE	/	TRUE	1754268752	wd	1280x720
+.instagram.com	TRUE	/	TRUE	1788223952	mid	aIbJzgALAAEWYYtojNGi38KS8qXI
