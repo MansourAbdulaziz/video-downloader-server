@@ -13,14 +13,37 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 # ✅ تحديد ملف الكوكيز المناسب حسب رابط الفيديو
 def get_cookie_path_by_url(url):
     url = url.lower()
+
     if "youtube.com" in url or "youtu.be" in url:
         return "cookies/youtube.txt"
     elif "tiktok.com" in url:
         return "cookies/tiktok.txt"
     elif "instagram.com" in url:
         return "cookies/instagram.txt"
-    elif "twitter.com" in url or "x.com" in url:
+    elif "facebook.com" in url:
+        return "cookies/facebook.txt"
+    elif "x.com" in url or "twitter.com" in url:
         return "cookies/twitter.txt"
+    elif "snapchat.com" in url:
+        return "cookies/snapchat.txt"
+    elif "linkedin.com" in url:
+        return "cookies/linkedin.txt"
+    elif "pinterest.com" in url:
+        return "cookies/pinterest.txt"
+    elif "rumble.com" in url:
+        return "cookies/rumble.txt"
+    elif "vimeo.com" in url:
+        return "cookies/vimeo.txt"
+    elif "twitch.tv" in url:
+        return "cookies/twitch.txt"
+    elif "kick.com" in url:
+        return "cookies/kick.txt"
+    elif "chingari.io" in url:
+        return "cookies/chingari.txt"
+    elif "capcut.com" in url:
+        return "cookies/capcut.txt"
+    elif "jaco.com" in url:
+        return "cookies/jaco.txt"
     else:
         return None  # تحميل بدون كوكيز
 
@@ -48,24 +71,34 @@ def process_url(url):
 
         best_url = None
         if "formats" in info:
-            formats = sorted(info["formats"], key=lambda f: f.get("height", 0), reverse=True)
-            for f in formats:
-                url_candidate = f.get("url")
-                ext = f.get("ext", "")
-                if url_candidate:
-                    if ext == "mp4":
-                        best_url = url_candidate
-                        print(f"Selected mp4 url with height {f.get('height')}")
-                        break
-                    elif ext == "m3u8" or (url_candidate.endswith(".m3u8")):
-                        best_url = url_candidate
-                        print("Selected m3u8 url")
-                        break
+        formats = info.get("formats", [])
+        if not isinstance(formats, list):
+            formats = []
 
-            if not best_url and len(info["formats"]) > 0:
-                best_url = formats[0].get("url")
-                print("Fallback to first available format url")
-        else:
+        formats = sorted(
+            formats,
+            key=lambda f: f.get("height") if isinstance(f.get("height"), int) else -1,
+            reverse=True
+        )
+
+        for f in formats:
+            url_candidate = f.get("url")
+            ext = f.get("ext", "")
+            if url_candidate:
+                if ext == "mp4":
+                    best_url = url_candidate
+                    print(f"Selected mp4 url with height {f.get('height')}")
+                    break
+                elif ext == "m3u8" or (url_candidate.endswith(".m3u8")):
+                    best_url = url_candidate
+                    print("Selected m3u8 url")
+                    break
+
+        if not best_url and formats:
+            best_url = formats[0].get("url")
+            print("Fallback to first available format url")
+
+        if not best_url:
             best_url = info.get("url")
 
         print("Selected download_url:", best_url)
