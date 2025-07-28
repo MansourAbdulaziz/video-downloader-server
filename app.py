@@ -26,6 +26,21 @@ def download():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/process', methods=['POST'])
+def process():
+    try:
+        data = request.get_json(force=True)
+        url = data.get('url')
+
+        if not url:
+            return jsonify({'error': 'Missing url'}), 400
+
+        result = process_url(url)
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # ✅ تحميل الفيديو فعليًا
 @app.route('/download-file', methods=['POST'])
 def download_file():
