@@ -71,32 +71,32 @@ def process_url(url):
 
         best_url = None
         if "formats" in info:
-        formats = info.get("formats", [])
-        if not isinstance(formats, list):
-            formats = []
+            formats = info.get("formats", [])
+            if not isinstance(formats, list):
+                formats = []
 
-        formats = sorted(
-            formats,
-            key=lambda f: f.get("height") if isinstance(f.get("height"), int) else -1,
-            reverse=True
-        )
+            formats = sorted(
+                formats,
+                key=lambda f: f.get("height") if isinstance(f.get("height"), int) else -1,
+                reverse=True
+            )
 
-        for f in formats:
-            url_candidate = f.get("url")
-            ext = f.get("ext", "")
-            if url_candidate:
-                if ext == "mp4":
-                    best_url = url_candidate
-                    print(f"Selected mp4 url with height {f.get('height')}")
-                    break
-                elif ext == "m3u8" or (url_candidate.endswith(".m3u8")):
-                    best_url = url_candidate
-                    print("Selected m3u8 url")
-                    break
+            for f in formats:
+                url_candidate = f.get("url")
+                ext = f.get("ext", "")
+                if url_candidate:
+                    if ext == "mp4":
+                        best_url = url_candidate
+                        print(f"Selected mp4 url with height {f.get('height')}")
+                        break
+                    elif ext == "m3u8" or url_candidate.endswith(".m3u8"):
+                        best_url = url_candidate
+                        print("Selected m3u8 url")
+                        break
 
-        if not best_url and formats:
-            best_url = formats[0].get("url")
-            print("Fallback to first available format url")
+            if not best_url and formats:
+                best_url = formats[0].get("url")
+                print("Fallback to first available format url")
 
         if not best_url:
             best_url = info.get("url")
