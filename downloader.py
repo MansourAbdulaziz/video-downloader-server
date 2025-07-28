@@ -11,7 +11,6 @@ app = Flask(__name__)
 # 📁 إعداد مجلد التحميل
 DOWNLOAD_DIR = "downloads"
 MAX_FILE_AGE_SECONDS = 3600  # ⏱ 1 ساعة
-
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 # ✅ تحديد ملف الكوكيز المناسب حسب رابط الفيديو
@@ -50,7 +49,7 @@ def get_cookie_path_by_url(url):
     else:
         return None
 
-# ✅ استخراج معلومات الفيديو بدون تحميل
+# ✅ استخراج معلومات الوسائط
 def process_url(url):
     cookie_path = get_cookie_path_by_url(url)
     command = [
@@ -66,11 +65,9 @@ def process_url(url):
     try:
         result = subprocess.run(command, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
-            print("yt-dlp failed:", result.stderr.strip())
             return {"error": "yt-dlp failed", "details": result.stderr.strip()}
 
         info = json.loads(result.stdout)
-        print("DEBUG yt-dlp info:", info)
 
         best_url = None
         if "formats" in info:
@@ -104,7 +101,7 @@ def process_url(url):
         if not best_url:
             return {"error": "No valid download URL found."}
 
-        # ✅ تحديد نوع الوسيط
+        # ✅ نوع الوسيط
         media_type = "unknown"
         lowered = best_url.lower()
         if any(ext in lowered for ext in [".mp4", ".mkv", ".mov", ".webm"]):
@@ -129,10 +126,36 @@ def process_url(url):
     except json.JSONDecodeError:
         return {"error": "Failed to parse yt-dlp output"}
     except Exception as e:
-        print("Exception in process_url:", str(e))
         return {"error": str(e)}
 
-# ✅ نقطة دخول API من Flutter
+# ✅ تحميل الفيديو الفعلي وحفظه داخل مجلد downloads
+def download_video(url):
+    cookie_path = get_cookie_path_by_url(url)
+    output_path = os.path.join(DOWNLOAD_DIR, f'%(title)s_%(id)s.%(ext)s')
+    command = [
+        "yt-dlp",
+        "--no-warnings",
+        "-o", output_path,
+        url
+    ]
+    if cookie_path and os.path.exists(cookie_path):
+        command.extend(["--cookies", cookie_path])
+
+    try:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+        if result.returncode != 0:
+            return {"error": "Download failed", "details": result.stderr.strip()}
+
+        # الحصول على اسم الملف الناتج
+        downloaded_files = os.listdir(DOWNLOAD_DIR)
+        downloaded_files.sort(key=lambda f: os.path.getctime(os.path.join(DOWNLOAD_DIR, f)), reverse=True)
+        latest_file = downloaded_files[0] if downloaded_files else None
+
+        return {"file": latest_file} if latest_file else {"error": "No file found"}
+    except Exception as e:
+        return {"error": str(e)}
+
+# ✅ نقاط دخول API
 @app.route("/")
 def index():
     return "✅ Server is running"
@@ -149,6 +172,18 @@ def api_process_url():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ✅ تشغيل السيرفر في حال التشغيل المباشر
+@app.route("/download", methods=["POST"])
+def api_download_video():
+    try:
+        data = request.get_json()
+        url = data.get("url")
+        if not url:
+            return jsonify({"error": "No URL provided"}), 400
+        result = download_video(url)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ✅ تشغيل مباشر
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
