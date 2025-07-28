@@ -1,8 +1,12 @@
+from flask import Flask, request, jsonify
 import subprocess
 import os
 import json
 import uuid
 import time
+
+# 🔹 إعداد Flask
+app = Flask(__name__)
 
 # 📁 إعداد مجلد التحميل
 DOWNLOAD_DIR = "downloads"
@@ -13,7 +17,6 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 # ✅ تحديد ملف الكوكيز المناسب حسب رابط الفيديو
 def get_cookie_path_by_url(url):
     url = url.lower()
-
     if "youtube.com" in url or "youtu.be" in url:
         return "cookies/youtube.txt"
     elif "tiktok.com" in url:
@@ -45,7 +48,7 @@ def get_cookie_path_by_url(url):
     elif "jaco.com" in url:
         return "cookies/jaco.txt"
     else:
-        return None  # تحميل بدون كوكيز
+        return None
 
 # ✅ استخراج معلومات الفيديو بدون تحميل
 def process_url(url):
@@ -87,35 +90,29 @@ def process_url(url):
                 if url_candidate:
                     if ext == "mp4":
                         best_url = url_candidate
-                        print(f"Selected mp4 url with height {f.get('height')}")
                         break
                     elif ext == "m3u8" or url_candidate.endswith(".m3u8"):
                         best_url = url_candidate
-                        print("Selected m3u8 url")
                         break
 
             if not best_url and formats:
                 best_url = formats[0].get("url")
-                print("Fallback to first available format url")
 
         if not best_url:
             best_url = info.get("url")
-
-        print("Selected download_url:", best_url)
 
         if not best_url:
             return {"error": "No valid download URL found."}
 
         # ✅ تحديد نوع الوسيط
         media_type = "unknown"
-        if best_url:
-            lowered = best_url.lower()
-            if any(ext in lowered for ext in [".mp4", ".mkv", ".mov", ".webm"]):
-                media_type = "video"
-            elif any(ext in lowered for ext in [".mp3", ".wav", ".m4a", ".aac"]):
-                media_type = "audio"
-            elif any(ext in lowered for ext in [".jpg", ".jpeg", ".png", ".webp", ".gif"]):
-                media_type = "image"
+        lowered = best_url.lower()
+        if any(ext in lowered for ext in [".mp4", ".mkv", ".mov", ".webm"]):
+            media_type = "video"
+        elif any(ext in lowered for ext in [".mp3", ".wav", ".m4a", ".aac"]):
+            media_type = "audio"
+        elif any(ext in lowered for ext in [".jpg", ".jpeg", ".png", ".webp", ".gif"]):
+            media_type = "image"
 
         return {
             "title": info.get("title"),
@@ -135,54 +132,23 @@ def process_url(url):
         print("Exception in process_url:", str(e))
         return {"error": str(e)}
 
-# ✅ تحميل الفيديو فعليًا
-def download_video(url):
-    cookie_path = get_cookie_path_by_url(url)
-    filename = f"{uuid.uuid4()}.mp4"
-    output_path = os.path.join(DOWNLOAD_DIR, filename)
+# ✅ نقطة دخول API من Flutter
+@app.route("/")
+def index():
+    return "✅ Server is running"
 
-    command = [
-        "yt-dlp",
-        "-f", "best",
-        "-o", output_path,
-        url
-    ]
-    if cookie_path and os.path.exists(cookie_path):
-        command.extend(["--cookies", cookie_path])
-
+@app.route("/process", methods=["POST"])
+def api_process_url():
     try:
-        result = subprocess.run(command, capture_output=True, text=True, timeout=120)
-        if result.returncode != 0:
-            return {"error": "Download failed", "details": result.stderr.strip()}
-
-        download_link = f"https://video-downloader-server-msm2.onrender.com/file/{filename}"
-
-        return {
-            "message": "Download successful",
-            "file": filename,
-            "path": output_path,
-            "download_url": download_link
-        }
-
-    except subprocess.TimeoutExpired:
-        return {"error": "Download timed out after 120 seconds"}
+        data = request.get_json()
+        url = data.get("url")
+        if not url:
+            return jsonify({"error": "No URL provided"}), 400
+        result = process_url(url)
+        return jsonify(result)
     except Exception as e:
-        return {"error": str(e)}
+        return jsonify({"error": str(e)}), 500
 
-# ✅ حذف الملفات القديمة من مجلد التحميل
-def cleanup_old_files():
-    now = time.time()
-    deleted = []
-
-    for filename in os.listdir(DOWNLOAD_DIR):
-        filepath = os.path.join(DOWNLOAD_DIR, filename)
-        if os.path.isfile(filepath):
-            file_age = now - os.path.getmtime(filepath)
-            if file_age > MAX_FILE_AGE_SECONDS:
-                try:
-                    os.remove(filepath)
-                    deleted.append(filename)
-                except Exception as e:
-                    print(f"❌ Failed to delete {filename}: {e}")
-
-    return {"deleted_files": deleted, "count": len(deleted)}
+# ✅ تشغيل السيرفر في حال التشغيل المباشر
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
