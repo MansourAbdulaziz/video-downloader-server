@@ -1,2 +1,0 @@
-# Netscape HTTP Cookie File
-telegram.org	FALSE	/	TRUE	1753707511.901875	stel_ssid	87fc592e912d61cc74_3977168368570551953
